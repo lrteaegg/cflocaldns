@@ -39,3 +39,4 @@ build/
 
 #测试代码
 src/test/
+/.idea/

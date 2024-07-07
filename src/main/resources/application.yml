@@ -1,0 +1,8 @@
+aliyun:
+  dns:
+    access-key-id: xxx
+    access-key-secret: xxx
+
+domain:
+  rr: v2
+  domain: xxx.com
