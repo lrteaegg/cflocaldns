@@ -109,7 +109,7 @@ public class AliyunDDNS {
                 // 读取ping命令的输出，找到响应时间
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
-                    if (line.contains("请求超时") || line.contains("Request timed out")) {
+                    if (line.contains("请求超时") || line.contains("Request timed out") || line.contains("time 0ms")){
                         time = 400;
                         break;
                     }
