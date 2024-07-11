@@ -24,12 +24,17 @@ import java.util.concurrent.ExecutionException;
 
 public class AliyunDDNS {
 
-    public static final StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
+  /*  public static final StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
             .accessKeyId(YamlConfigLoader.ACCESS_KEY_ID)
             .accessKeySecret(YamlConfigLoader.ACCESS_KEY_SECRET)
-            .build());
+            .build());*/
 
     public static AsyncClient getClient() {
+        YamlConfigLoader.init();
+        StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
+                .accessKeyId(YamlConfigLoader.ACCESS_KEY_ID)
+                .accessKeySecret(YamlConfigLoader.ACCESS_KEY_SECRET)
+                .build());
         return AsyncClient.builder()
                 .credentialsProvider(provider)
                 .overrideConfiguration(
@@ -83,7 +88,7 @@ public class AliyunDDNS {
      * @return
      */
     public double ping(String host) {
-        int numPings = 20;
+        int numPings = 10;
 
         List<Double> pingTimes = new ArrayList<>();
 
@@ -139,8 +144,12 @@ public class AliyunDDNS {
             // 计算正态分布的值
             double mean = calculateMean(pingTimes);
             double variance = calculateVariance(pingTimes);
-            NormalDistribution normalDistribution = new NormalDistribution(mean, Math.sqrt(variance));
-            double normalValue = normalDistribution.sample();
+            double normalValue = mean;
+            if (variance != 0) {
+                NormalDistribution normalDistribution = new NormalDistribution(mean, Math.sqrt(variance));
+                normalValue = normalDistribution.sample();
+            }
+
 
             System.out.println("Value from Normal Distribution: " + normalValue);
             return normalValue;
@@ -200,6 +209,7 @@ public class AliyunDDNS {
         AsyncClient client = getClient();
         // Parameter settings for API request
         DescribeSubDomainRecordsRequest describeSubDomainRecordsRequest = DescribeSubDomainRecordsRequest.builder()
+                .line(TelecomEnum.TELECOM.getValue())
                 .subDomain(subDomain)
                 .build();
 

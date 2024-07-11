@@ -27,6 +27,7 @@ public class Main {
                 checkIp(aliyunDDNS, cfcsvParser);
             }, 0, 6, TimeUnit.HOURS);
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error in main");
         }
     }
@@ -43,6 +44,7 @@ public class Main {
             System.out.println("ping值大于200，更换ip");
             cfcsvParser.runCloudflareST();
             String ip = cfcsvParser.readCSVIP();
+            System.out.println("改变 ip 为：" + ip);
             aliyunDDNS.changeIp(YamlConfigLoader.RR, YamlConfigLoader.DOMAIN, ip);
         } catch (ExecutionException | InterruptedException | IOException e) {
             System.out.println("Error in checkIp");

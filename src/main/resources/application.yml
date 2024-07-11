@@ -2,6 +2,7 @@ aliyun:
   dns:
     access-key-id: xxx
     access-key-secret: xxx
+cloudflare:
 
 domain:
   rr: v2

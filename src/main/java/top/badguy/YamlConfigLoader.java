@@ -19,6 +19,9 @@ public class YamlConfigLoader {
 
 
     public static void init() {
+        if (ACCESS_KEY_ID != null) {
+            return;
+        }
         Yaml yaml = new Yaml(new Constructor(Map.class));
         Map<String, Object> data = null;
         try {
