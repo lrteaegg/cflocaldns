@@ -7,3 +7,8 @@ cloudflare:
 domain:
   rr: v2
   domain: xxx.com
+
+mysql:
+  url: jdbc:mysql://192.168.2.53:3306/cfddns?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+  username: root
+  password: root

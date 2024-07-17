@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Map;
+import top.badguy.dao.MysqlConfig;
 
 public class YamlConfigLoader {
 
@@ -54,6 +55,17 @@ public class YamlConfigLoader {
         if (domain != null) {
             RR = (String) domain.get("rr");
             DOMAIN = (String) domain.get("domain");
+        }
+
+        // mysql
+        Map<String, Object> mysql = (Map<String, Object>) data.get("mysql");
+        if (mysql != null) {
+            if (mysql != null) {
+                MysqlConfig.url = (String) mysql.get("url");
+                MysqlConfig.username = (String) mysql.get("username");
+                MysqlConfig.password = (String) mysql.get("password");
+
+            }
         }
     }
 }

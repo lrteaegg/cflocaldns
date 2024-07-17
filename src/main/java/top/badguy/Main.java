@@ -1,6 +1,7 @@
 package top.badguy;
 
 import top.badguy.aliyun.AliyunDDNS;
+import top.badguy.dao.NetworkStatsDAO;
 import top.badguy.parser.CFCSVParser;
 
 import java.io.IOException;
@@ -16,6 +17,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
         try {
             YamlConfigLoader.init();
+            NetworkStatsDAO networkStatsDAO = new NetworkStatsDAO();
+            networkStatsDAO.getNetworkStats();
             CFCSVParser cfcsvParser = new CFCSVParser();
             AliyunDDNS aliyunDDNS = new AliyunDDNS();
 //        cfcsvParser.runCloudflareST();
