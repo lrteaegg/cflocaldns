@@ -2,6 +2,7 @@ package top.badguy;
 
 import top.badguy.aliyun.AliyunDDNS;
 import top.badguy.dao.NetworkStatsDAO;
+import top.badguy.enums.BooleanEnum;
 import top.badguy.parser.CFCSVParser;
 
 import java.io.IOException;
@@ -21,12 +22,27 @@ public class Main {
             AliyunDDNS aliyunDDNS = new AliyunDDNS();
 //        cfcsvParser.runCloudflareST();
             checkIp(aliyunDDNS, cfcsvParser);
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
             // 延迟0秒后开始执行，然后每隔1小时执行一次
             scheduler.scheduleAtFixedRate(() -> {
                 // 这里放需要定时执行的任务代码
                 checkIp(aliyunDDNS, cfcsvParser);
             }, 0, 6, TimeUnit.HOURS);
+            // 每隔1小时执行一次
+            scheduler.scheduleAtFixedRate(() -> {
+            // 检验 ping 数据库没有超过 200 延迟的ip
+                NetworkStatsDAO networkStatsDAO = NetworkStatsDAO.getInstance();
+                networkStatsDAO.getNetworkStats(200).forEach(ip -> {
+                    double avg = aliyunDDNS.ping(ip, 10);
+                    if (avg < 200) {
+                        networkStatsDAO.updateNetworkStats(ip, (float) avg, BooleanEnum.FALSE);
+                    } else {
+                        networkStatsDAO.deleteNetworkStats(ip);
+                    }
+                });
+
+            }, 0, 1, TimeUnit.HOURS);
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error in main");
