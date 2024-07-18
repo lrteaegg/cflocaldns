@@ -10,7 +10,7 @@ public class NetworkStats {
 
     private Float averageLatency;
 
-    private Boolean isUsed;
+    private int isUsed;
 
     private Date createdAt;
 
@@ -53,11 +53,11 @@ public class NetworkStats {
         this.averageLatency = averageLatency;
     }
 
-    public Boolean getIsUsed() {
+    public int getIsUsed() {
         return isUsed;
     }
 
-    public void setIsUsed(Boolean isUsed) {
+    public void setIsUsed(int isUsed) {
         this.isUsed = isUsed;
     }
 

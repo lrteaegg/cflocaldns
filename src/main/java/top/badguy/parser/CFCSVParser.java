@@ -4,6 +4,9 @@ package top.badguy.parser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
+import top.badguy.dao.NetworkStatsDAO;
+import top.badguy.enums.BooleanEnum;
 import top.badguy.exception.BizException;
 
 import java.io.*;
@@ -16,10 +19,20 @@ public class CFCSVParser {
     public String readCSVIP() {
         File configFile = new File(System.getProperty("user.dir") + File.separator + "result.csv");
         try (
-             InputStream resourceAsStream = new FileInputStream(configFile);
-             Reader reader = new InputStreamReader(resourceAsStream);
-             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);) {
+                InputStream resourceAsStream = new FileInputStream(configFile);
+                Reader reader = new InputStreamReader(resourceAsStream);
+                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);) {
             List<CSVRecord> records = csvParser.getRecords();
+            NetworkStatsDAO networkStatsDAO = NetworkStatsDAO.getInstance();
+            for (int i = 1; i < records.size(); i++) {
+                if (StringUtils.isBlank(records.get(i).get(0))) {
+                    break;
+                }
+                //  2024/7/18 存储库
+                String ip = records.get(i).get(0);
+                Float averageLatency = Float.valueOf(records.get(i).get(4));
+                networkStatsDAO.saveOrUpdateNetworkStats(ip, averageLatency, BooleanEnum.FALSE);
+            }
             CSVRecord firstRow = records.get(1);
             String ip = firstRow.get(0);
             return ip;
@@ -62,7 +75,7 @@ public class CFCSVParser {
             e.printStackTrace();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             reader.close();
             process.destroy();
         }

@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import darabonba.core.client.ClientOverrideConfiguration;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import top.badguy.YamlConfigLoader;
+import top.badguy.dao.NetworkStatsDAO;
+import top.badguy.enums.BooleanEnum;
 import top.badguy.enums.TelecomEnum;
 import top.badguy.exception.BizException;
 
@@ -78,7 +80,9 @@ public class AliyunDDNS {
         DescribeSubDomainRecordsResponse resp = response.get();
 //        DescribeDomainRecordsResponseBody.DomainRecords domainRecords = resp.getBody().getDomainRecords();
         System.out.println(new Gson().toJson(resp));
-        return resp.getBody().getDomainRecords().getRecord().get(0).getValue();
+        String ip = resp.getBody().getDomainRecords().getRecord().get(0).getValue();
+        NetworkStatsDAO.getInstance().saveOrUpdateNetworkStats(ip, 0.0f, BooleanEnum.TRUE);
+        return ip;
     }
 
     /**
@@ -87,14 +91,13 @@ public class AliyunDDNS {
      * @param host
      * @return
      */
-    public double ping(String host) {
-        int numPings = 10;
+    public double ping(String host, int count) {
 
         List<Double> pingTimes = new ArrayList<>();
 
         // 执行ping命令并解析输出
         try {
-            for (int i = 0; i < numPings; i++) {
+            for (int i = 0; i < count; i++) {
                 ProcessBuilder processBuilder;
                 String charset = System.getProperty("os.name").toLowerCase().contains("windows") ? "GBK" : StandardCharsets.UTF_8.name();
                 if (System.getProperty("os.name").toLowerCase().contains("windows")) {
@@ -152,6 +155,8 @@ public class AliyunDDNS {
 
 
             System.out.println("Value from Normal Distribution: " + normalValue);
+
+//            NetworkStatsDAO.getInstance().saveOrUpdateNetworkStats(host, (float) normalValue, BooleanEnum.FALSE);
             return normalValue;
         } catch (IOException e) {
             throw new BizException(e);
@@ -200,6 +205,7 @@ public class AliyunDDNS {
         // Synchronously get the return value of the API request
         UpdateDomainRecordResponse resp = response.get();
         System.out.println(new Gson().toJson(resp));
+        NetworkStatsDAO.getInstance().saveOrUpdateNetworkStats(value, 0.0f, BooleanEnum.TRUE);
     }
 
     /**

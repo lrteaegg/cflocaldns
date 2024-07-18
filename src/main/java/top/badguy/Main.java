@@ -17,8 +17,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         try {
             YamlConfigLoader.init();
-            NetworkStatsDAO networkStatsDAO = new NetworkStatsDAO();
-            networkStatsDAO.getNetworkStats();
             CFCSVParser cfcsvParser = new CFCSVParser();
             AliyunDDNS aliyunDDNS = new AliyunDDNS();
 //        cfcsvParser.runCloudflareST();
@@ -39,20 +37,21 @@ public class Main {
         System.out.println("Executing task at " + System.currentTimeMillis());
         try {
             String orgIp = aliyunDDNS.getSubDomainIp(YamlConfigLoader.RR+"."+YamlConfigLoader.DOMAIN);
-            double ping = aliyunDDNS.ping(orgIp);
+            double ping = aliyunDDNS.ping(orgIp, 20);
             if (ping < 200) {
                 System.out.println("ping值小于200，不需要更换ip");
                 return;
             }
             System.out.println("ping值大于200，更换ip");
             cfcsvParser.runCloudflareST();
+            // TODO: 2024/7/18 改为从数据库中取 
             String ip = cfcsvParser.readCSVIP();
             System.out.println("改变 ip 为：" + ip);
             aliyunDDNS.changeIp(YamlConfigLoader.RR, YamlConfigLoader.DOMAIN, ip);
         } catch (ExecutionException | InterruptedException | IOException e) {
             System.out.println("Error in checkIp");
             throw new RuntimeException(e);
-        }
+        } 
     }
 
 
