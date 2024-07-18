@@ -27,7 +27,7 @@ public class NetworkStatsDAO {
     public List<String> getNetworkStats(int avgLatency) {
         List<String> ipList = new ArrayList<>();
         try (Statement statement = MysqlConfig.getStatement()){
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM network_stats where average_latency < " + avgLatency +" order by updated_at desc limit 50");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM network_stats where average_latency < " + avgLatency +" order by updated_at asc limit 50");
             while (resultSet.next()) {
                 System.out.println(resultSet.getString("ip_address"));
                 ipList.add(resultSet.getString("ip_address"));

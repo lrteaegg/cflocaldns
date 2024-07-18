@@ -41,7 +41,7 @@ public class Main {
                     }
                 });
 
-            }, 0, 1, TimeUnit.HOURS);
+            }, 0, 20, TimeUnit.MINUTES);
 
         } catch (Exception e) {
             e.printStackTrace();
