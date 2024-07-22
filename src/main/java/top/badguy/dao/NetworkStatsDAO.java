@@ -27,7 +27,7 @@ public class NetworkStatsDAO {
     public List<String> getNetworkStats(int avgLatency) {
         List<String> ipList = new ArrayList<>();
         try (Statement statement = MysqlConfig.getStatement()){
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM network_stats where average_latency < " + avgLatency +" order by updated_at asc limit 50");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM network_stats where average_latency < " + avgLatency +" and is_used = 0 order by updated_at asc limit 50");
             while (resultSet.next()) {
                 System.out.println(resultSet.getString("ip_address"));
                 ipList.add(resultSet.getString("ip_address"));
@@ -52,6 +52,17 @@ public class NetworkStatsDAO {
         String timeString = getTimeString();
         try (Statement statement = MysqlConfig.getStatement()){
             statement.executeUpdate("UPDATE network_stats SET average_latency = " + averageLatency + ", is_used = " + isUsed  +
+                    ", updated_at = '" + timeString +
+                    "' WHERE ip_address = '" + ipAddress + "'");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateNetworkStats(String ipAddress, Float averageLatency) {
+        String timeString = getTimeString();
+        try (Statement statement = MysqlConfig.getStatement()){
+            statement.executeUpdate("UPDATE network_stats SET average_latency = " + averageLatency  +
                     ", updated_at = '" + timeString +
                     "' WHERE ip_address = '" + ipAddress + "'");
         } catch (SQLException | ClassNotFoundException e) {

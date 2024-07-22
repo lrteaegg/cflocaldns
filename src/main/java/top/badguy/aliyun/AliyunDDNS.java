@@ -81,7 +81,7 @@ public class AliyunDDNS {
 //        DescribeDomainRecordsResponseBody.DomainRecords domainRecords = resp.getBody().getDomainRecords();
         System.out.println(new Gson().toJson(resp));
         String ip = resp.getBody().getDomainRecords().getRecord().get(0).getValue();
-        NetworkStatsDAO.getInstance().saveOrUpdateNetworkStats(ip, 0.0f, BooleanEnum.TRUE);
+//        NetworkStatsDAO.getInstance().saveOrUpdateNetworkStats(ip, 0.0f, BooleanEnum.TRUE);
         return ip;
     }
 

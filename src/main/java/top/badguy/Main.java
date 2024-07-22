@@ -33,12 +33,8 @@ public class Main {
             // 检验 ping 数据库没有超过 200 延迟的ip
                 NetworkStatsDAO networkStatsDAO = NetworkStatsDAO.getInstance();
                 networkStatsDAO.getNetworkStats(200).forEach(ip -> {
-                    double avg = aliyunDDNS.ping(ip, 10);
-                    if (avg < 200) {
-                        networkStatsDAO.updateNetworkStats(ip, (float) avg, BooleanEnum.FALSE);
-                    } else {
-                        networkStatsDAO.deleteNetworkStats(ip);
-                    }
+                    double avg = aliyunDDNS.ping(ip, 15);
+                    networkStatsDAO.updateNetworkStats(ip, (float) avg);
                 });
 
             }, 0, 20, TimeUnit.MINUTES);
